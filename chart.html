@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>نمودار ساعت‌ها</title>
+<style>
+  body {
+    background-color: #191919;
+    padding: 20px;
+    font-family: Tahoma, sans-serif;
+  }
+  #chartWrap {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+</style>
+</head>
+<body>
+
+<div id="chartWrap">
+  <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const chartTitle = 'عملکرد ساعت‌ها';
+
+  fetch('./data.json?t=' + Date.now()) // جلوگیری از کش شدن
+    .then((res) => res.json())
+    .then((data) => {
+      const ctx = document.getElementById('myChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [{
+            label: chartTitle,
+            data: data.values,
+            borderColor: '#9b59b6',
+            backgroundColor: 'rgba(155, 89, 182, 0.25)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#9b59b6',
+            pointRadius: 4,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: chartTitle,
+              color: 'white',
+              font: { size: 16 }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: 'white' },
+              grid: { color: '#333' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: 'white' },
+              grid: { color: '#333' }
+            }
+          }
+        }
+      });
+    })
+    .catch((err) => {
+      document.getElementById('chartWrap').innerHTML =
+        '<p style="color:white">خطا در بارگذاری داده — data.json پیدا نشد یا هنوز ساخته نشده.</p>';
+      console.error(err);
+    });
+</script>
+
+</body>
+</html>
